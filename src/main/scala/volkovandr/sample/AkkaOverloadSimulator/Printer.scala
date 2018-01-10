@@ -13,6 +13,6 @@ class Printer extends Actor with ActorLogging {
 
   def receive: PartialFunction[Any, Unit] = {
     case PrintMessage(message) =>
-      log.info(s"Message from ${sender()}: $message")
+      println(s"${sender().path.name}: $message")
   }
 }

@@ -41,7 +41,7 @@ class Sender (printer: ActorRef, processor: ActorRef, printEvery: Int) extends A
 
   var counter: Long = 0
   var continue = false
-  var slowness: Int = 10
+  var slowness: Int = 5
 
   def generateAndSendMessageToProcessor(): Unit = {
     Thread.sleep(slowness)

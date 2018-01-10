@@ -3,15 +3,20 @@ package volkovandr.sample.AkkaOverloadSimulator
 import akka.actor.{ActorRef, ActorSystem}
 import Sender._
 import Receiver._
+import com.typesafe.config.ConfigFactory
 
 object Main extends App {
+
+  val conf = ConfigFactory.load()
+  val printEvery = conf.getInt("print-every")
+
   val system: ActorSystem = ActorSystem("MessagesSendProcessReceive")
 
-  val printer: ActorRef = system.actorOf(Printer.props, "printer")
-  val receiver: ActorRef = system.actorOf(Receiver.props(printer, 100000))
-  val processor: ActorRef = system.actorOf(Processor.props(printer, receiver, 100000))
-  val sender: ActorRef = system.actorOf(Sender.props(printer, processor, 100000))
-  val throttler: ActorRef = system.actorOf(Throttler.props(printer, sender))
+  val printer: ActorRef = system.actorOf(Printer.props, "Printer")
+  val receiver: ActorRef = system.actorOf(Receiver.props(printer, printEvery), "Receiver")
+  val processor: ActorRef = system.actorOf(Processor.props(printer, receiver, printEvery), "Processor")
+  val sender: ActorRef = system.actorOf(Sender.props(printer, processor, printEvery), "Sender")
+  val throttler: ActorRef = system.actorOf(Throttler.props(printer, sender), "Throttler")
 
   Metrics.initMetrics()
 
